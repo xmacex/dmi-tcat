@@ -1783,6 +1783,11 @@ function upgrades($dry_run = false, $interactive = true, $aulevel = 2, $single =
         }
     }
 
+    // 2019-02-21 Sanitize bin comment fields post-facto, https://github.com/digitalmethodsinitiative/dmi-tcat/issues/350
+    $query = "UPDATE tcat_query_bins SET comments = REPLACE(REPLACE(comments, '<', '&lt;'), '>', '&gt;') WHERE comments REGEXP '.*[<>].*';";
+    $rec = $dbh->prepare($query);
+    $rec->execute();
+
     // End of upgrades
 
     if ($required == true && $suggested == true) {
